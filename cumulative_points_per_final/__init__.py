@@ -9,7 +9,7 @@ from RHUI import UIField, UIFieldType, UIFieldSelectOption
 
 logger = logging.getLogger(__name__)
 
-def rank_points_total(rhapi, race_class, args):
+def rank_points_heat(rhapi, race_class, args):
 
     heats = rhapi.db.heats_by_class(race_class.id)
 
@@ -38,22 +38,34 @@ def rank_points_total(rhapi, race_class, args):
         new_pilot_result['callsign'] = pilot_result[0]['callsign']
         new_pilot_result['team_name'] = pilot_result[0]['team_name']
         new_pilot_result['points'] = 0
+        new_pilot_result['heat'] = ''
+        new_pilot_result['heat_id'] = 0
 
         for race in pilot_result:
             if 'points' in race:
                 new_pilot_result['points'] += race['points']
 
+        for heat in reversed(heats):
+            heat_result = rhapi.db.heat_results(heat)
+            if heat_result:
+                heat_leaderboard = heat_result[heat_result['meta']['primary_leaderboard']]
+        
+                for line in heat_leaderboard:
+                    if line['pilot_id'] == pilot_result[0]['pilot_id']:
+                        new_pilot_result['heat'] = heat.display_name
+                        new_pilot_result['heat_id'] = heat.id
+
         leaderboard.append(new_pilot_result)
 
     # Sort by points
-    if 'ascending' in args and args['ascending']:
-        leaderboard = sorted(leaderboard, key = lambda x: (
-            x['points']
-        ))
-    else:
-        leaderboard = sorted(leaderboard, key = lambda x: (
-            -x['points']
-        ))
+    leaderboard = sorted(leaderboard, key = lambda x: (
+        -x['points']
+    ))
+
+    leaderboard = sorted(leaderboard, key = lambda x: (
+        -x['heat_id']
+    ))
+
 
     # determine ranking
     last_rank = None
@@ -69,6 +81,9 @@ def rank_points_total(rhapi, race_class, args):
 
     meta = {
         'rank_fields': [{
+            'name': 'heat',
+            'label': "Heat"
+        },{
             'name': 'points',
             'label': "Points"
         }]
@@ -79,8 +94,8 @@ def rank_points_total(rhapi, race_class, args):
 def register_handlers(args):
     args['register_fn'](
         RaceClassRankMethod(
-            "Cumulative Points per Final",
-            rank_points_total,
+            "Cumulative Points per Heat",
+            rank_points_heat,
             None,
             None
         )
