@@ -40,10 +40,17 @@ def rank_points_heat(rhapi, race_class, args):
         new_pilot_result['points'] = 0
         new_pilot_result['heat'] = ''
         new_pilot_result['heat_id'] = 0
+        new_pilot_result['laps'] = 0
+        new_pilot_result['total_time_raw'] = 0
 
         for race in pilot_result:
+            new_pilot_result['laps'] += race['laps']
+            new_pilot_result['total_time_raw'] += race['total_time_raw']
             if 'points' in race:
                 new_pilot_result['points'] += race['points']
+
+        timeFormat = rhapi.db.option('timeFormat')
+        new_pilot_result['total_time'] = str(new_pilot_result['laps']) + '/' + RHUtils.time_format(new_pilot_result['total_time_raw'], timeFormat)
 
         for heat in reversed(heats):
             heat_result = rhapi.db.heat_results(heat)
@@ -59,30 +66,26 @@ def rank_points_heat(rhapi, race_class, args):
 
     # Sort by points
     leaderboard = sorted(leaderboard, key = lambda x: (
-        -x['points']
+        -x['heat_id'],
+        -x['points'],
+        -x['laps'], # reverse lap count
+        x['total_time_raw'] if x['total_time_raw'] and x['total_time_raw'] > 0 else float('inf') # total time ascending except 0
     ))
-
-    leaderboard = sorted(leaderboard, key = lambda x: (
-        -x['heat_id']
-    ))
-
 
     # determine ranking
     last_rank = None
     last_rank_points = 0
     for i, row in enumerate(leaderboard, start=1):
         pos = i
-        if last_rank_points == row['points']:
-            pos = last_rank
-        last_rank = pos
-        last_rank_points = row['points']
-
         row['position'] = pos
 
     meta = {
         'rank_fields': [{
             'name': 'heat',
             'label': "Heat"
+        },{
+            'name': 'total_time',
+            'label': "Laps"
         },{
             'name': 'points',
             'label': "Points"
