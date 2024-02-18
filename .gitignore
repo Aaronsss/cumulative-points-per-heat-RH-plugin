@@ -1,0 +1,28 @@
+# Compiled Python scripts
+*.pyc
+
+# Development resources
+/.settings
+/src/libraries
+
+# RH Database and backups
+*.db
+/src/server/db_bkp/*
+!/src/server/db_bkp/README.md
+
+# Local system configuration
+/src/server/config.json
+
+# Run logs
+logs
+
+# Specific folders
+venv
+
+# User files, except the README
+/src/server/static/user/*
+!/src/server/static/user/README.md
+
+# Plugins, except bundled and README
+/rh_*
+
