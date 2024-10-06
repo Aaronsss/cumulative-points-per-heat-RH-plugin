@@ -49,7 +49,7 @@ def rank_points_heat(rhapi, race_class, args):
             if 'points' in race:
                 new_pilot_result['points'] += race['points']
 
-        timeFormat = rhapi.db.option('timeFormat')
+        timeFormat = rhapi.config.get_item('UI', 'timeFormat')
         new_pilot_result['total_time'] = str(new_pilot_result['laps']) + '/' + RHUtils.time_format(new_pilot_result['total_time_raw'], timeFormat)
 
         for heat in reversed(heats):
