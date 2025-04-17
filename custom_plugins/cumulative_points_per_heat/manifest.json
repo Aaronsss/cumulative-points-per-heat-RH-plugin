@@ -1,9 +1,9 @@
 {
-    "domain": "cumulative_points_per_final",
-    "name": "Cumulative Points Per Final",
+    "domain": "cumulative_points_per_heat",
+    "name": "Cumulative Points Per Heat",
     "author": "Aaron Smith",
     "license": "MIT",
-    "description": "Class ranking for pilots based on heat, total points, laps then total laptime",
+    "description": "Class ranking for pilots based on heat, total points, laps then total laptime, often used for tripple finals",
     "info_uri": "https://github.com/Aaronsss/cumulative_points_per_heat/",
     "required_rhapi_version": "1.1",
     "version": "1.2.0",
