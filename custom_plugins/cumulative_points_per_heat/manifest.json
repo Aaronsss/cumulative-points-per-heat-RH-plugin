@@ -1,0 +1,12 @@
+{
+    "domain": "cumulative_points_per_final",
+    "name": "Cumulative Points Per Final",
+    "author": "Aaron Smith",
+    "license": "MIT",
+    "description": "Class ranking for pilots based on heat, total points, laps then total laptime",
+    "info_uri": "https://github.com/Aaronsss/cumulative_points_per_heat/",
+    "required_rhapi_version": "1.1",
+    "version": "1.2.0",
+    "category": ["Class Rankings"]
+  }
+  
